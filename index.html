@@ -10,7 +10,7 @@
     box-sizing:border-box;
     margin:0;
     padding:0;
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
 }
 
 body{
@@ -186,13 +186,17 @@ footer{
     <h2>Create Your Song</h2>
 
     <label>Song idea</label>
-    <textarea id="prompt"
-    placeholder="Example: A motivational song about never giving up..."></textarea>
+
+    <textarea
+        id="prompt"
+        placeholder="Example: A motivational song about never giving up..."
+    ></textarea>
 
     <div class="row">
 
         <div>
             <label>Language</label>
+
             <select id="language">
                 <option value="Hindi">Hindi</option>
                 <option value="Gujarati">Gujarati</option>
@@ -203,6 +207,7 @@ footer{
 
         <div>
             <label>Genre</label>
+
             <select id="genre">
                 <option>Pop</option>
                 <option>Hip Hop</option>
@@ -220,6 +225,7 @@ footer{
 
         <div>
             <label>Mood</label>
+
             <select id="mood">
                 <option>Happy</option>
                 <option>Sad</option>
@@ -232,6 +238,7 @@ footer{
 
         <div>
             <label>Vocal Style</label>
+
             <select id="vocal">
                 <option>Male</option>
                 <option>Female</option>
@@ -258,8 +265,11 @@ footer{
             ✨ Generate Lyrics
         </button>
 
-        <button class="secondary" onclick="generateSong()">
-            🎵 Generate Demo Song
+        <button
+            class="secondary"
+            onclick="generateSong()"
+        >
+            🎵 Generate AI Song
         </button>
 
     </div>
@@ -292,28 +302,31 @@ Your generated lyrics will appear here...
 
 <div class="card">
 
-    <div class="badge">AUDIO</div>
+    <div class="badge">AI AUDIO</div>
 
     <h2>Song Preview</h2>
 
-    <audio id="audioPlayer" controls></audio>
+    <audio
+        id="audioPlayer"
+        controls
+    ></audio>
 
     <div class="buttons">
 
         <button onclick="downloadAudio()">
-            ⬇️ Download Audio
+            ⬇️ Download AI Song
         </button>
 
     </div>
 
     <div class="status">
-        Demo audio is generated inside your browser.
-        Real AI vocals/music can be connected later.
+        AI music is generated through the secure BeatForge backend.
     </div>
 
 </div>
 
 </div>
+
 
 <footer>
 BeatForge AI • Original content generator
@@ -324,6 +337,14 @@ BeatForge AI • Original content generator
 
 let currentLyrics = "";
 let currentAudioURL = null;
+
+
+/* -------------------------
+   CLOUDFLARE WORKER
+------------------------- */
+
+const API_URL =
+"https://beatforge-ai.m-chaudhari0554.workers.dev";
 
 
 /* -------------------------
@@ -344,6 +365,7 @@ function generateLyrics(){
     const mood =
         document.getElementById("mood").value;
 
+
     if(!prompt){
 
         document.getElementById("status").innerText =
@@ -352,29 +374,42 @@ function generateLyrics(){
         return;
     }
 
+
     document.getElementById("status").innerText =
     "✨ Creating original lyrics...";
 
+
     setTimeout(()=>{
 
-        currentLyrics = createLyrics(
-            prompt,
-            language,
-            genre,
-            mood
-        );
+        currentLyrics =
+            createLyrics(
+                prompt,
+                language,
+                genre,
+                mood
+            );
 
         document.getElementById("lyricsBox").innerText =
-        currentLyrics;
+            currentLyrics;
 
         document.getElementById("status").innerText =
-        "✅ Lyrics generated!";
+            "✅ Lyrics generated!";
 
     },700);
+
 }
 
 
-function createLyrics(prompt,language,genre,mood){
+/* -------------------------
+   ORIGINAL LYRICS
+------------------------- */
+
+function createLyrics(
+    prompt,
+    language,
+    genre,
+    mood
+){
 
     if(language === "Hindi"){
 
@@ -542,25 +577,16 @@ And follow my heart.`;
 
 
 /* -------------------------
-   DEMO SONG GENERATOR
+   REAL AI SONG GENERATOR
 ------------------------- */
 
 async function generateSong(){
 
-    if(!currentLyrics){
+    const idea =
+        document.getElementById("prompt").value.trim();
 
-        generateLyrics();
-
-        await new Promise(
-            resolve => setTimeout(resolve,900)
-        );
-    }
-
-    document.getElementById("status").innerText =
-    "🎵 Creating demo instrumental...";
-
-    const duration =
-        Number(document.getElementById("duration").value);
+    const language =
+        document.getElementById("language").value;
 
     const genre =
         document.getElementById("genre").value;
@@ -568,269 +594,140 @@ async function generateSong(){
     const mood =
         document.getElementById("mood").value;
 
-    try{
+    const vocal =
+        document.getElementById("vocal").value;
 
-        const blob =
-            await createAudio(duration,genre,mood);
+    const duration =
+        Number(
+            document.getElementById("duration").value
+        );
 
-        if(currentAudioURL){
-            URL.revokeObjectURL(currentAudioURL);
-        }
 
-        currentAudioURL =
-            URL.createObjectURL(blob);
-
-        document.getElementById("audioPlayer").src =
-            currentAudioURL;
+    if(!idea){
 
         document.getElementById("status").innerText =
-            "✅ Demo song ready!";
+            "Please enter your song idea first.";
+
+        return;
+    }
+
+
+    document.getElementById("status").innerText =
+        "🎵 Generating your AI song... Please wait.";
+
+
+    const musicPrompt = `
+
+Create a completely original ${language} song.
+
+Theme:
+${idea}
+
+Genre:
+${genre}
+
+Mood:
+${mood}
+
+Vocal style:
+${vocal}
+
+Use original lyrics and an original melody.
+Do not imitate any existing artist or copyrighted song.
+
+Create a complete song with vocals, melody,
+harmony, rhythm, bass and appropriate instruments.
+
+Make the arrangement suitable for a polished modern
+${genre} song.
+
+The lyrics should primarily be in ${language}.
+
+`;
+
+
+    try{
+
+        const response =
+            await fetch(
+                API_URL,
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                        "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        prompt:musicPrompt,
+
+                        duration:duration
+
+                    })
+                }
+            );
+
+
+        if(!response.ok){
+
+            const errorText =
+                await response.text();
+
+            throw new Error(
+                errorText ||
+                "AI generation failed."
+            );
+        }
+
+
+        const audioBlob =
+            await response.blob();
+
+
+        if(currentAudioURL){
+
+            URL.revokeObjectURL(
+                currentAudioURL
+            );
+
+        }
+
+
+        currentAudioURL =
+            URL.createObjectURL(
+                audioBlob
+            );
+
+
+        const player =
+            document.getElementById(
+                "audioPlayer"
+            );
+
+
+        player.src =
+            currentAudioURL;
+
+
+        player.load();
+
+
+        document.getElementById("status").innerText =
+            "✅ AI song ready! Press Play ▶️";
+
 
     }catch(error){
 
         console.error(error);
 
         document.getElementById("status").innerText =
-            "Audio generation failed.";
+            "❌ Song generation failed: " +
+            error.message;
 
     }
-}
 
-
-/* -------------------------
-   BROWSER AUDIO ENGINE
-------------------------- */
-
-async function createAudio(
-    duration,
-    genre,
-    mood
-){
-
-    const sampleRate = 44100;
-
-    const seconds =
-        Math.min(duration,240);
-
-    const totalSamples =
-        sampleRate * seconds;
-
-    const audioContext =
-        new OfflineAudioContext(
-            1,
-            totalSamples,
-            sampleRate
-        );
-
-    const master =
-        audioContext.createGain();
-
-    master.gain.value = 0.12;
-
-    master.connect(
-        audioContext.destination
-    );
-
-
-    let baseFrequency = 220;
-
-    if(genre === "Rock")
-        baseFrequency = 146.83;
-
-    if(genre === "Hip Hop")
-        baseFrequency = 110;
-
-    if(genre === "Lo-fi")
-        baseFrequency = 196;
-
-    if(genre === "Electronic")
-        baseFrequency = 261.63;
-
-
-    let moodMultiplier = 1;
-
-    if(mood === "Sad")
-        moodMultiplier = 0.82;
-
-    if(mood === "Energetic")
-        moodMultiplier = 1.35;
-
-    if(mood === "Happy")
-        moodMultiplier = 1.15;
-
-
-    const notes = [
-        1,
-        1.25,
-        1.5,
-        1.33,
-        1.12,
-        1.5,
-        1.25,
-        1
-    ];
-
-
-    for(
-        let time=0;
-        time<seconds;
-        time+=0.5
-    ){
-
-        const index =
-            Math.floor(time*2) %
-            notes.length;
-
-        const osc =
-            audioContext.createOscillator();
-
-        const gain =
-            audioContext.createGain();
-
-        osc.type =
-            genre === "Electronic"
-            ? "sawtooth"
-            : "sine";
-
-        osc.frequency.value =
-            baseFrequency *
-            notes[index] *
-            moodMultiplier;
-
-        gain.gain.setValueAtTime(
-            0,
-            time
-        );
-
-        gain.gain.linearRampToValueAtTime(
-            0.5,
-            time+0.03
-        );
-
-        gain.gain.exponentialRampToValueAtTime(
-            0.001,
-            time+0.45
-        );
-
-        osc.connect(gain);
-
-        gain.connect(master);
-
-        osc.start(time);
-
-        osc.stop(time+0.48);
-    }
-
-
-    const rendered =
-        await audioContext.startRendering();
-
-
-    return audioBufferToWav(rendered);
-}
-
-
-/* -------------------------
-   WAV CREATOR
-------------------------- */
-
-function audioBufferToWav(buffer){
-
-    const samples =
-        buffer.getChannelData(0);
-
-    const bufferLength =
-        samples.length;
-
-    const wav =
-        new ArrayBuffer(
-            44 + bufferLength * 2
-        );
-
-    const view =
-        new DataView(wav);
-
-
-    function writeString(offset,string){
-
-        for(let i=0;i<string.length;i++){
-
-            view.setUint8(
-                offset+i,
-                string.charCodeAt(i)
-            );
-        }
-    }
-
-
-    writeString(0,"RIFF");
-
-    view.setUint32(
-        4,
-        36 + bufferLength * 2,
-        true
-    );
-
-    writeString(8,"WAVE");
-
-    writeString(12,"fmt ");
-
-    view.setUint32(16,16,true);
-
-    view.setUint16(20,1,true);
-
-    view.setUint16(22,1,true);
-
-    view.setUint32(
-        24,
-        buffer.sampleRate,
-        true
-    );
-
-    view.setUint32(
-        28,
-        buffer.sampleRate * 2,
-        true
-    );
-
-    view.setUint16(32,2,true);
-
-    view.setUint16(34,16,true);
-
-    writeString(36,"data");
-
-    view.setUint32(
-        40,
-        bufferLength * 2,
-        true
-    );
-
-
-    let offset=44;
-
-    for(let i=0;i<bufferLength;i++){
-
-        let sample =
-            Math.max(
-                -1,
-                Math.min(1,samples[i])
-            );
-
-        view.setInt16(
-            offset,
-            sample < 0
-            ? sample * 0x8000
-            : sample * 0x7FFF,
-            true
-        );
-
-        offset += 2;
-    }
-
-    return new Blob(
-        [view],
-        {type:"audio/wav"}
-    );
 }
 
 
@@ -842,57 +739,85 @@ function downloadLyrics(){
 
     if(!currentLyrics){
 
-        alert("Generate lyrics first.");
+        alert(
+            "Generate lyrics first."
+        );
 
         return;
     }
 
+
     const blob =
         new Blob(
             [currentLyrics],
-            {type:"text/plain"}
+            {
+                type:"text/plain"
+            }
         );
+
 
     const url =
         URL.createObjectURL(blob);
 
+
     const a =
         document.createElement("a");
 
-    a.href = url;
+
+    a.href =
+        url;
+
 
     a.download =
         "BeatForge-AI-Lyrics.txt";
 
+
+    document.body.appendChild(a);
+
     a.click();
 
+    a.remove();
+
+
     URL.revokeObjectURL(url);
+
 }
 
 
 /* -------------------------
-   DOWNLOAD AUDIO
+   DOWNLOAD AI SONG
 ------------------------- */
 
 function downloadAudio(){
 
     if(!currentAudioURL){
 
-        alert("Generate a song first.");
+        alert(
+            "Generate an AI song first."
+        );
 
         return;
     }
 
+
     const a =
         document.createElement("a");
+
 
     a.href =
         currentAudioURL;
 
+
     a.download =
-        "BeatForge-AI-Song.wav";
+        "BeatForge-AI-Song.mp3";
+
+
+    document.body.appendChild(a);
 
     a.click();
+
+    a.remove();
+
 }
 
 </script>
