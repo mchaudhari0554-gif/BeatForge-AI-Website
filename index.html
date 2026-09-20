@@ -2,170 +2,104 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BeatForge AI - Song Generator</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,sans-serif;
-}
-
+*{box-sizing:border-box}
 body{
-    background:#080810;
-    color:white;
-    min-height:100vh;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+  background:#080810;
+  color:white;
 }
-
 header{
-    padding:20px;
-    text-align:center;
-    border-bottom:1px solid #222;
-    background:#0d0d18;
+  padding:22px;
+  text-align:center;
+  background:#0d0d18;
+  border-bottom:1px solid #222;
 }
-
 .logo{
-    font-size:28px;
-    font-weight:bold;
+  font-size:28px;
+  font-weight:bold;
+  color:#9b5cff;
 }
-
-.logo span{
-    color:#9b5cff;
-}
-
 .subtitle{
-    color:#aaa;
-    margin-top:6px;
-    font-size:14px;
+  color:#aaa;
+  margin-top:6px;
 }
-
 .container{
-    max-width:900px;
-    margin:auto;
-    padding:20px;
+  max-width:900px;
+  margin:auto;
+  padding:20px;
 }
-
 .card{
-    background:#11111d;
-    border:1px solid #252535;
-    border-radius:18px;
-    padding:20px;
-    margin-bottom:20px;
+  background:#11111d;
+  border:1px solid #252535;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:20px;
 }
-
-h2{
-    margin-bottom:15px;
-}
-
 label{
-    display:block;
-    color:#bbb;
-    margin:12px 0 7px;
+  display:block;
+  color:#bbb;
+  margin:12px 0 7px;
 }
-
 input,select,textarea{
-    width:100%;
-    background:#080810;
-    color:white;
-    border:1px solid #333348;
-    border-radius:10px;
-    padding:13px;
-    outline:none;
+  width:100%;
+  background:#080810;
+  color:white;
+  border:1px solid #333348;
+  border-radius:10px;
+  padding:13px;
+  outline:none;
 }
-
 textarea{
-    min-height:120px;
-    resize:vertical;
+  min-height:110px;
+  resize:vertical;
 }
-
-.row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
-}
-
 button{
-    border:none;
-    border-radius:12px;
-    padding:14px 18px;
-    color:white;
-    background:#7b3ff2;
-    font-size:15px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:15px;
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:15px;
+  margin-top:15px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
 }
-
-button:hover{
-    opacity:.9;
+.lyricsBtn{
+  background:#7c3cff;
+  color:white;
 }
-
-.secondary{
-    background:#252538;
+.songBtn{
+  background:#27273a;
+  color:white;
 }
-
-.buttons{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
+button:disabled{
+  opacity:.5;
 }
-
-#lyricsBox{
-    white-space:pre-wrap;
-    line-height:1.7;
-    color:#ddd;
-    background:#080810;
-    padding:18px;
-    border-radius:12px;
-    min-height:220px;
+#status{
+  margin-top:15px;
+  color:#ffb3b3;
+  white-space:pre-wrap;
 }
-
-.status{
-    color:#aaa;
-    margin-top:12px;
-    font-size:14px;
-}
-
 audio{
-    width:100%;
-    margin-top:15px;
+  width:100%;
+  margin-top:15px;
 }
-
-.badge{
-    display:inline-block;
-    background:#241541;
-    color:#cdaaff;
-    padding:6px 10px;
-    border-radius:20px;
-    font-size:12px;
-    margin-bottom:12px;
+.lyrics{
+  background:#080810;
+  padding:15px;
+  border-radius:12px;
+  line-height:1.7;
+  white-space:pre-wrap;
 }
-
-footer{
-    text-align:center;
-    color:#777;
-    padding:30px;
-    font-size:13px;
-}
-
-@media(max-width:650px){
-    .row{
-        grid-template-columns:1fr;
-    }
-
-    .container{
-        padding:12px;
-    }
-
-    .card{
-        padding:16px;
-    }
-
-    .logo{
-        font-size:24px;
-    }
+.small{
+  color:#888;
+  font-size:13px;
+  margin-top:7px;
 }
 </style>
 </head>
@@ -173,651 +107,240 @@ footer{
 <body>
 
 <header>
-    <div class="logo">🎵 BeatForge <span>AI</span></div>
-    <div class="subtitle">Create your own original songs</div>
+  <div class="logo">🎵 BeatForge AI</div>
+  <div class="subtitle">AI Song Generator</div>
 </header>
 
 <div class="container">
 
 <div class="card">
 
-    <div class="badge">SONG GENERATOR</div>
+<label>Song Idea</label>
+<textarea id="prompt"
+placeholder="Example: A romantic Hindi love song about two people who miss each other..."></textarea>
 
-    <h2>Create Your Song</h2>
+<label>Language</label>
+<select id="language">
+  <option>Hindi</option>
+  <option>Gujarati</option>
+  <option>Punjabi</option>
+  <option>English</option>
+</select>
 
-    <label>Song idea</label>
+<label>Genre</label>
+<select id="genre">
+  <option>Pop</option>
+  <option>Hip Hop</option>
+  <option>Lo-fi</option>
+  <option>Rock</option>
+  <option>Romantic</option>
+  <option>Motivational</option>
+  <option>Electronic</option>
+</select>
 
-    <textarea
-        id="prompt"
-        placeholder="Example: A motivational song about never giving up..."
-    ></textarea>
+<label>Mood</label>
+<select id="mood">
+  <option>Happy</option>
+  <option>Sad</option>
+  <option>Energetic</option>
+  <option>Chill</option>
+  <option>Dark</option>
+  <option>Hopeful</option>
+</select>
 
-    <div class="row">
+<label>Vocal Style</label>
+<select id="vocal">
+  <option>Male</option>
+  <option>Female</option>
+  <option>Soft</option>
+  <option>Powerful</option>
+  <option>Rap</option>
+</select>
 
-        <div>
-            <label>Language</label>
+<label>Song Length</label>
+<input id="duration" type="number" min="3" max="240" value="60">
+<div class="small">3 seconds થી 240 seconds (4 minutes)</div>
 
-            <select id="language">
-                <option value="Hindi">Hindi</option>
-                <option value="Gujarati">Gujarati</option>
-                <option value="Punjabi">Punjabi</option>
-                <option value="English">English</option>
-            </select>
-        </div>
+<button class="lyricsBtn" onclick="generateLyrics()">
+  ✨ Generate Lyrics
+</button>
 
-        <div>
-            <label>Genre</label>
+<button class="songBtn" id="songButton" onclick="generateSong()">
+  🎵 Generate AI Song
+</button>
 
-            <select id="genre">
-                <option>Pop</option>
-                <option>Hip Hop</option>
-                <option>Lo-fi</option>
-                <option>Rock</option>
-                <option>Romantic</option>
-                <option>Motivational</option>
-                <option>Electronic</option>
-            </select>
-        </div>
+<div id="status"></div>
 
-    </div>
-
-    <div class="row">
-
-        <div>
-            <label>Mood</label>
-
-            <select id="mood">
-                <option>Happy</option>
-                <option>Sad</option>
-                <option>Energetic</option>
-                <option>Chill</option>
-                <option>Dark</option>
-                <option>Hopeful</option>
-            </select>
-        </div>
-
-        <div>
-            <label>Vocal Style</label>
-
-            <select id="vocal">
-                <option>Male</option>
-                <option>Female</option>
-                <option>Soft</option>
-                <option>Powerful</option>
-                <option>Rap</option>
-            </select>
-        </div>
-
-    </div>
-
-    <label>Song Length</label>
-
-    <select id="duration">
-        <option value="60">1 Minute</option>
-        <option value="120">2 Minutes</option>
-        <option value="180">3 Minutes</option>
-        <option value="240">4 Minutes</option>
-    </select>
-
-    <div class="buttons">
-
-        <button onclick="generateLyrics()">
-            ✨ Generate Lyrics
-        </button>
-
-        <button
-            class="secondary"
-            onclick="generateSong()"
-        >
-            🎵 Generate AI Song
-        </button>
-
-    </div>
-
-    <div id="status" class="status"></div>
+<audio id="audioPlayer" controls></audio>
 
 </div>
-
 
 <div class="card">
-
-    <div class="badge">LYRICS</div>
-
-    <h2>Your Lyrics</h2>
-
-    <div id="lyricsBox">
-Your generated lyrics will appear here...
-    </div>
-
-    <div class="buttons">
-
-        <button onclick="downloadLyrics()">
-            ⬇️ Download Lyrics
-        </button>
-
-    </div>
-
+<h2>Your Lyrics</h2>
+<div id="lyrics" class="lyrics">
+Lyrics અહીં દેખાશે...
 </div>
-
-
-<div class="card">
-
-    <div class="badge">AI AUDIO</div>
-
-    <h2>Song Preview</h2>
-
-    <audio
-        id="audioPlayer"
-        controls
-    ></audio>
-
-    <div class="buttons">
-
-        <button onclick="downloadAudio()">
-            ⬇️ Download AI Song
-        </button>
-
-    </div>
-
-    <div class="status">
-        AI music is generated through the secure BeatForge backend.
-    </div>
-
 </div>
 
 </div>
-
-
-<footer>
-BeatForge AI • Original content generator
-</footer>
-
 
 <script>
-
-let currentLyrics = "";
-let currentAudioURL = null;
-
-
-/* -------------------------
-   CLOUDFLARE WORKER
-------------------------- */
 
 const API_URL =
 "https://beatforge-ai.m-chaudhari0554.workers.dev";
 
+function getDuration(){
+  let d = Number(document.getElementById("duration").value);
 
-/* -------------------------
-   LYRICS GENERATOR
-------------------------- */
+  if(!Number.isFinite(d)) d = 60;
+
+  d = Math.max(3,Math.min(240,d));
+
+  document.getElementById("duration").value = d;
+
+  return d;
+}
 
 function generateLyrics(){
 
-    const prompt =
-        document.getElementById("prompt").value.trim();
+  const idea =
+    document.getElementById("prompt").value.trim();
 
-    const language =
-        document.getElementById("language").value;
+  const language =
+    document.getElementById("language").value;
 
-    const genre =
-        document.getElementById("genre").value;
+  if(!idea){
+    document.getElementById("status").textContent =
+      "❌ પહેલા Song Idea લખો.";
+    return;
+  }
 
-    const mood =
-        document.getElementById("mood").value;
+  const lyrics =
+`[Verse 1]
 
-
-    if(!prompt){
-
-        document.getElementById("status").innerText =
-        "Please enter your song idea.";
-
-        return;
-    }
-
-
-    document.getElementById("status").innerText =
-    "✨ Creating original lyrics...";
-
-
-    setTimeout(()=>{
-
-        currentLyrics =
-            createLyrics(
-                prompt,
-                language,
-                genre,
-                mood
-            );
-
-        document.getElementById("lyricsBox").innerText =
-            currentLyrics;
-
-        document.getElementById("status").innerText =
-            "✅ Lyrics generated!";
-
-    },700);
-
-}
-
-
-/* -------------------------
-   ORIGINAL LYRICS
-------------------------- */
-
-function createLyrics(
-    prompt,
-    language,
-    genre,
-    mood
-){
-
-    if(language === "Hindi"){
-
-        return `[Verse 1]
-
-${prompt} की ये कहानी है,
-दिल में एक नई रवानी है।
-रास्ते चाहे मुश्किल हों,
-फिर भी अपनी मनमानी है।
-
-[Pre-Chorus]
-
-गिरकर भी हम उठेंगे,
-सपनों को फिर चुनेंगे।
-आज नहीं तो कल सही,
-अपना आसमान छू लेंगे।
+${idea}
 
 [Chorus]
 
-ये मेरी उड़ान है,
-ये मेरा आसमान है।
-रुकना नहीं, झुकना नहीं,
-दिल में अभी जान है।
+તારી યાદોમાં દિલ મારું ખોવાઈ જાય,
+દરેક પળે બસ તું જ યાદ આવે.
 
 [Verse 2]
 
-रातों के बाद सवेरा होगा,
-हर सपना फिर मेरा होगा।
-जो खोया वो सीख बनेगा,
-आगे अपना बसेरा होगा।
+રસ્તા ભલે અલગ હોય,
+પણ દિલની વાત એક જ રહે.
 
 [Chorus]
 
-ये मेरी उड़ान है,
-ये मेरा आसमान है।
-रुकना नहीं, झुकना नहीं,
-दिल में अभी जान है।
+તારી યાદોમાં દિલ મારું ખોવાઈ જાય,
+દરેક પળે બસ તું જ યાદ આવે.
 
 [Outro]
 
-नई सुबह बुलाती है,
-ज़िंदगी गीत सुनाती है।
-आज से अपनी कहानी,
-अपने हाथों लिखनी है.`;
+આ કહાની આપણી,
+હંમેશા દિલમાં જીવતી રહે.`;
 
-    }
-
-
-    if(language === "Gujarati"){
-
-        return `[અંતરો 1]
-
-${prompt} ની આ કહાની છે,
-હૈયામાં નવી રવાણી છે.
-રસ્તા ભલે મુશ્કેલ હોય,
-પણ આંખોમાં એક નિશાની છે.
-
-[પ્રી-કોરસ]
-
-પડીને ફરી ઊભા થઈશું,
-સપનાઓને સાચા કરીશું.
-આજે નહીં તો કાલે,
-આકાશને પણ સ્પર્શીશું.
-
-[કોરસ]
-
-આ મારી ઉડાન છે,
-આ મારું આકાશ છે.
-રોકાવું નથી, ઝુકાવું નથી,
-હૈયામાં હજુ શ્વાસ છે.
-
-[અંતરો 2]
-
-રાત પછી સવાર આવશે,
-દરેક સપનું સાકાર થશે.
-જે ગયું તે શીખ બની,
-આગળ નવી રાહ મળશે.
-
-[કોરસ]
-
-આ મારી ઉડાન છે,
-આ મારું આકાશ છે.
-રોકાવું નથી, ઝુકાવું નથી,
-હૈયામાં હજુ શ્વાસ છે.`;
-
-    }
-
-
-    if(language === "Punjabi"){
-
-        return `[Verse 1]
-
-${prompt} di eh kahani ae,
-Dil vich navi rawani ae.
-Rahan bhawein aukhiyaan hon,
-Akhan vich umeed purani ae.
-
-[Pre-Chorus]
-
-Dig ke fer uthange,
-Supne saare chunange.
-Ajj nahi taan kal sahi,
-Apna aasman chhange.
-
-[Chorus]
-
-Eh meri udaan ae,
-Eh mera aasman ae.
-Rukna nahi, jhukna nahi,
-Dil vich poori jaan ae.
-
-[Verse 2]
-
-Raat ton baad savera ae,
-Supna hun vi mera ae.
-Jo guzri oh seekh bani,
-Agge nava basera ae.`;
-
-    }
-
-
-    return `[Verse 1]
-
-This is a story about ${prompt},
-A brand new road beneath my feet.
-Every step becomes a memory,
-Every heartbeat finds a beat.
-
-[Pre-Chorus]
-
-I will rise again,
-I will chase the sky.
-Even when the road gets hard,
-I will never say goodbye.
-
-[Chorus]
-
-This is my moment,
-This is my time.
-I will keep moving,
-Till the stars all shine.
-
-[Verse 2]
-
-Every night becomes a lesson,
-Every dream becomes a light.
-I keep walking through the darkness,
-Till I find the morning bright.
-
-[Chorus]
-
-This is my moment,
-This is my time.
-I will keep moving,
-Till the stars all shine.
-
-[Outro]
-
-A new day is calling,
-A new story starts.
-I keep my dreams alive,
-And follow my heart.`;
-
+  document.getElementById("lyrics").textContent = lyrics;
+  document.getElementById("status").textContent =
+    "✅ Lyrics generated";
 }
-
-
-/* -------------------------
-   REAL AI SONG GENERATOR
-------------------------- */
 
 async function generateSong(){
 
-    const idea =
-        document.getElementById("prompt").value.trim();
+  const idea =
+    document.getElementById("prompt").value.trim();
 
-    const language =
-        document.getElementById("language").value;
+  if(!idea){
+    document.getElementById("status").textContent =
+      "❌ પહેલા Song Idea લખો.";
+    return;
+  }
 
-    const genre =
-        document.getElementById("genre").value;
+  const language =
+    document.getElementById("language").value;
 
-    const mood =
-        document.getElementById("mood").value;
+  const genre =
+    document.getElementById("genre").value;
 
-    const vocal =
-        document.getElementById("vocal").value;
+  const mood =
+    document.getElementById("mood").value;
 
-    const duration =
-        Number(
-            document.getElementById("duration").value
-        );
+  const vocal =
+    document.getElementById("vocal").value;
 
+  const duration = getDuration();
 
-    if(!idea){
+  const musicPrompt =
+`Create a completely original ${language} song.
 
-        document.getElementById("status").innerText =
-            "Please enter your song idea first.";
-
-        return;
-    }
-
-
-    document.getElementById("status").innerText =
-        "🎵 Generating your AI song... Please wait.";
-
-
-    const musicPrompt = `
-
-Create a completely original ${language} song.
-
-Theme:
+Idea:
 ${idea}
 
-Genre:
-${genre}
+Genre: ${genre}
+Mood: ${mood}
+Vocal style: ${vocal}
 
-Mood:
-${mood}
-
-Vocal style:
-${vocal}
-
-Use original lyrics and an original melody.
+Make the song completely original.
 Do not imitate any existing artist or copyrighted song.
+Create original music and vocals.`;
 
-Create a complete song with vocals, melody,
-harmony, rhythm, bass and appropriate instruments.
+  const button =
+    document.getElementById("songButton");
 
-Make the arrangement suitable for a polished modern
-${genre} song.
+  const status =
+    document.getElementById("status");
 
-The lyrics should primarily be in ${language}.
+  const player =
+    document.getElementById("audioPlayer");
 
-`;
+  button.disabled = true;
+  status.textContent =
+    "🎵 Generating song... Please wait.";
 
+  try{
 
-    try{
+    const response = await fetch(API_URL,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        prompt:musicPrompt,
+        duration:duration
+      })
+    });
 
-        const response =
-            await fetch(
-                API_URL,
-                {
-                    method:"POST",
+    if(!response.ok){
 
-                    headers:{
-                        "Content-Type":
-                        "application/json"
-                    },
+      const errorText =
+        await response.text();
 
-                    body:JSON.stringify({
-
-                        prompt:musicPrompt,
-
-                        duration:duration
-
-                    })
-                }
-            );
-
-
-        if(!response.ok){
-
-            const errorText =
-                await response.text();
-
-            throw new Error(
-                errorText ||
-                "AI generation failed."
-            );
-        }
-
-
-        const audioBlob =
-            await response.blob();
-
-
-        if(currentAudioURL){
-
-            URL.revokeObjectURL(
-                currentAudioURL
-            );
-
-        }
-
-
-        currentAudioURL =
-            URL.createObjectURL(
-                audioBlob
-            );
-
-
-        const player =
-            document.getElementById(
-                "audioPlayer"
-            );
-
-
-        player.src =
-            currentAudioURL;
-
-
-        player.load();
-
-
-        document.getElementById("status").innerText =
-            "✅ AI song ready! Press Play ▶️";
-
-
-    }catch(error){
-
-        console.error(error);
-
-        document.getElementById("status").innerText =
-            "❌ Song generation failed: " +
-            error.message;
-
+      throw new Error(errorText);
     }
-
-}
-
-
-/* -------------------------
-   DOWNLOAD LYRICS
-------------------------- */
-
-function downloadLyrics(){
-
-    if(!currentLyrics){
-
-        alert(
-            "Generate lyrics first."
-        );
-
-        return;
-    }
-
 
     const blob =
-        new Blob(
-            [currentLyrics],
-            {
-                type:"text/plain"
-            }
-        );
+      await response.blob();
 
+    const audioURL =
+      URL.createObjectURL(blob);
 
-    const url =
-        URL.createObjectURL(blob);
+    player.src = audioURL;
+    player.play().catch(()=>{});
 
+    status.textContent =
+      "✅ Song generated successfully!";
 
-    const a =
-        document.createElement("a");
+  }catch(error){
 
+    status.textContent =
+      "❌ Song generation failed:\n" +
+      error.message;
 
-    a.href =
-        url;
+  }finally{
 
+    button.disabled = false;
 
-    a.download =
-        "BeatForge-AI-Lyrics.txt";
-
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    a.remove();
-
-
-    URL.revokeObjectURL(url);
-
-}
-
-
-/* -------------------------
-   DOWNLOAD AI SONG
-------------------------- */
-
-function downloadAudio(){
-
-    if(!currentAudioURL){
-
-        alert(
-            "Generate an AI song first."
-        );
-
-        return;
-    }
-
-
-    const a =
-        document.createElement("a");
-
-
-    a.href =
-        currentAudioURL;
-
-
-    a.download =
-        "BeatForge-AI-Song.mp3";
-
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    a.remove();
-
+  }
 }
 
 </script>
